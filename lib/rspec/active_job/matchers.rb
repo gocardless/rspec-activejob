@@ -1,3 +1,5 @@
+require 'rspec/mocks/argument_list_matcher'
+
 module RSpec
   module ActiveJob
     module Matchers
@@ -15,7 +17,7 @@ module RSpec
         def with(*args)
           raise "Must specify the job class when specifying arguments" unless job_class
 
-          @expected_args = args
+          @argument_list_matcher = RSpec::Mocks::ArgumentListMatcher.new(*args)
           self
         end
 
@@ -28,7 +30,7 @@ module RSpec
             return "expected to enqueue a #{job_class}, enqueued a #{enqueued_jobs.last[:job]}"
           end
 
-          "expected to enqueue a #{job_class} with #{expected_args}, but enqueued with " \
+          "expected to enqueue a #{job_class} with #{argument_list_matcher.expected_args}, but enqueued with " \
           "#{new_jobs_with_correct_class.first[:args]}"
         end
 
@@ -38,7 +40,7 @@ module RSpec
 
         private
 
-        attr_reader :before_count, :after_count, :job_class, :expected_args
+        attr_reader :before_count, :after_count, :job_class, :argument_list_matcher
 
         def enqueued_something?
           new_jobs.any?
@@ -50,7 +52,7 @@ module RSpec
         end
 
         def with_correct_args?
-          return true unless expected_args
+          return true unless argument_list_matcher
           new_jobs_with_correct_class_and_args.any?
         end
 
@@ -63,7 +65,7 @@ module RSpec
         end
 
         def new_jobs_with_correct_class_and_args
-          new_jobs_with_correct_class.select { |job| job[:args] == expected_args }
+          new_jobs_with_correct_class.select { |job| argument_list_matcher.args_match?(*job[:args]) }
         end
 
         def enqueued_jobs
