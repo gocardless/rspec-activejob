@@ -19,6 +19,7 @@ Gem::Specification.new do |s|
   s.require_paths = %w(lib)
 
   s.add_runtime_dependency('activejob', '>= 4.2')
+  s.add_runtime_dependency('rspec-mocks')
 
   s.add_development_dependency('rspec')
   s.add_development_dependency('rspec-its')

@@ -51,9 +51,11 @@ RSpec.describe RSpec::ActiveJob::Matchers::EnqueueA do
   context "with argument expectations" do
     let(:job_class) { AJob }
     let(:instance) { described_class.new(job_class).with(*arguments) }
-    let(:arguments) { ['thing', 'other_thing'] }
+    let(:arguments) { [instance_of(BJob), hash_including(thing: 1)] }
 
-    let(:proc) { -> { enqueued_jobs << { job: AJob, args: arguments } } }
+    let(:proc) do
+      -> { enqueued_jobs << { job: AJob, args: [BJob.new, { thing: 1, 'thing' => 2 }] } }
+    end
 
     it { is_expected.to be(true) }
 
