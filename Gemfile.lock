@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    rspec-activejob (0.0.1)
+    rspec-activejob (0.1.0)
       activejob (>= 4.2)
       rspec-mocks
 
