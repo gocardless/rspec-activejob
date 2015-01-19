@@ -65,7 +65,8 @@ module RSpec
         end
 
         def new_jobs_with_correct_class_and_args
-          new_jobs_with_correct_class.select { |job| argument_list_matcher.args_match?(*job[:args]) }
+          new_jobs_with_correct_class.
+            select { |job| argument_list_matcher.args_match?(*job[:args]) }
         end
 
         def enqueued_jobs
