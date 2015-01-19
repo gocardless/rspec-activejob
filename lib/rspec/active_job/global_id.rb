@@ -15,6 +15,10 @@ module RSpec
             other.keys == ['_aj_globalid'] &&
             other['_aj_globalid'] == @expected
         end
+
+        def description
+          "serialized global ID #{@expected}"
+        end
       end
     end
   end

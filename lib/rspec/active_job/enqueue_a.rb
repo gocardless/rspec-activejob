@@ -38,6 +38,12 @@ module RSpec
           true
         end
 
+        def description
+          return "enqueue a job" unless job_class
+          return "enqueue a #{job_class.name}" unless argument_list_matcher
+          "enqueue a #{job_class.name} with #{argument_list_matcher.expected_args}"
+        end
+
         private
 
         attr_reader :before_count, :after_count, :job_class, :argument_list_matcher
