@@ -1,23 +1,40 @@
+require 'global_id'
+
 module RSpec
   module ActiveJob
     module Matchers
       class GlobalID
         def initialize(expected)
-          unless expected.respond_to?(:to_global_id)
-            raise "expected argument must implement to_global_id"
-          end
+          raise "expected argument must implement to_global_id" unless valid_expected?(expected)
 
-          @expected = expected.to_global_id.to_s
+          @expected = expected
         end
 
         def ===(other)
           other.is_a?(Hash) &&
             other.keys == ['_aj_globalid'] &&
-            other['_aj_globalid'] == @expected
+            global_id_matches?(other['_aj_globalid'])
         end
 
         def description
-          "serialized global ID #{@expected}"
+          "serialized global ID of #{@expected}"
+        end
+
+        private
+
+        def valid_expected?(expected)
+          return expected.instance_method(:to_global_id) if expected.is_a?(Class)
+          expected.respond_to?(:to_global_id)
+        end
+
+        def global_id_matches?(other)
+          return correct_class?(::GlobalID.parse(other)) if @expected.is_a?(Class)
+          other == @expected.to_global_id.to_s
+        end
+
+        def correct_class?(other)
+          other.app == ::GlobalID.app &&
+            other.model_class == @expected
         end
       end
     end
