@@ -17,7 +17,8 @@ module RSpec
         end
 
         def description
-          "serialized global ID of #{@expected}"
+          "serialized global ID of #{@expected}" unless @expected.is_a?(Class)
+          "serialized global ID of #{@expected.name}"
         end
 
         private
