@@ -1,15 +1,48 @@
 # RSpec ActiveJob matchers
 
 ```ruby
+# config/environments/test.rb
+config.active_job.queue_adapter = :test
+
+# spec/spec_helper.rb
 RSpec.configure do |config|
   config.include(RSpec::ActiveJob)
+
+  # clean out the queue after each spec
+  config.after(:each) do
+    ActiveJob::Base.queue_adapter.enqueued_jobs = []
+    ActiveJob::Base.queue_adapter.performed_jobs = []
+  end
 end
 
+# spec/controllers/my_controller_spec.rb
 RSpec.describe MyController do
   let(:user) { create(:user) }
   let(:params) { { user_id: user.id } }
   subject(:make_request) { described_class.make_request(params) }
 
-  specify { expect { make_request }.to enqueue_a(RequestMaker).with(user) }
+  specify { expect { make_request }.to enqueue_a(RequestMaker).with(global_id(user)) }
 end
 ```
+
+rspec-activejob expects the current queue adapter to expose an array of `enqueued_jobs`, for example
+the included test adapter. The test adapter included in ActiveJob 4.2.0 does not fully serialize its
+arguments, so you will not need to use the GlobalID matcher until ActiveJob 4.2.1. See rails/rails#18266
+for the improved test adapter.
+
+There are two matchers defined:
+
+* `enqueue_a`: for a block or proc, expects that to enqueue an job to the ActiveJob test adapter. Optionally
+  takes the job class as its argument, and can be modified with a `.with(*args)` call to expect specific arguments.
+  This will use the same argument list matcher as rspec-mocks' `receive(:message).with(*args)` matcher.
+
+* `global_id(model_or_class)`: an argument matcher, matching ActiveJob-serialized versions of model classes or
+  specific models (or any other class which implements `to_global_id`). If you pass a model class, it will match
+  the serialized version of any instance of that model; if you pass an instance, it will expect the serialized
+  version of that specific instance.
+
+
+With the `global_id` matcher it's important to note that it's specific to ActiveJob-serialized GlobalIDs.
+ActiveJob serializes them as a hash like `{ '_aj_global_id' => 'gid://my-app/MyModel/ID123' }`, to avoid
+clashes with plain strings which accidentally match the GlobalID syntax. This matcher will not work with
+other usages of GlobalID.
