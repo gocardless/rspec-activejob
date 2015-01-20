@@ -25,12 +25,12 @@ RSpec.describe MyController do
 end
 ```
 
-rspec-activejob expects the current queue adapter to expose an array of `enqueued_jobs`, for example
-the included test adapter. The test adapter included in ActiveJob 4.2.0 does not fully serialize its
-arguments, so you will not need to use the GlobalID matcher until ActiveJob 4.2.1. See rails/rails#18266
-for the improved test adapter.
+rspec-activejob expects the current queue adapter to expose an array of `enqueued_jobs`, like the included
+test adapter. The test adapter included in ActiveJob 4.2.0 does not fully serialize its arguments, so you
+will not need to use the GlobalID matcher until ActiveJob 4.2.1. See rails/rails#18266 for the improved
+test adapter.
 
-There are two matchers defined:
+This gem defines two matchers:
 
 * `enqueue_a`: for a block or proc, expects that to enqueue an job to the ActiveJob test adapter. Optionally
   takes the job class as its argument, and can be modified with a `.with(*args)` call to expect specific arguments.
