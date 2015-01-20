@@ -29,7 +29,8 @@ module RSpec
         end
 
         def global_id_matches?(other)
-          return correct_class?(::GlobalID.parse(other)) if @expected.is_a?(Class)
+          return false unless parsed = ::GlobalID.parse(other)
+          return correct_class?(parsed) if @expected.is_a?(Class)
           other == @expected.to_global_id.to_s
         end
 
