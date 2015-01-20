@@ -27,10 +27,12 @@ module RSpec
           end
 
           unless enqueued_correct_class?
-            return "expected to enqueue a #{job_class}, enqueued a #{enqueued_jobs.last[:job]}"
+            return "expected to enqueue a #{job_class}, " \
+                   "enqueued a #{enqueued_jobs.last[:job]}"
           end
 
-          "expected to enqueue a #{job_class} with #{argument_list_matcher.expected_args}, but enqueued with " \
+          "expected to enqueue a #{job_class} with " \
+          "#{argument_list_matcher.expected_args}, but enqueued with " \
           "#{new_jobs_with_correct_class.first[:args]}"
         end
 

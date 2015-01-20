@@ -6,8 +6,9 @@ RSpec.describe RSpec::ActiveJob::Matchers::GlobalID do
       "gid://my-app/MyModel/ID123"
     end
   end
+
   let(:instance) { described_class.new(expected) }
-  subject(:matches?){ instance === actual }
+  subject(:matches?) { instance === actual }
 
   before { GlobalID.app = 'my-app' }
 
@@ -30,7 +31,9 @@ RSpec.describe RSpec::ActiveJob::Matchers::GlobalID do
     end
 
     context "hash with extra stuff" do
-      let(:actual) { { '_aj_globalid' => 'gid://my-app/MyModel/ID123', 'other' => 'stuff' } }
+      let(:actual) do
+        { '_aj_globalid' => 'gid://my-app/MyModel/ID123', 'other' => 'stuff' }
+      end
       it { is_expected.to be(false) }
     end
 
@@ -64,7 +67,9 @@ RSpec.describe RSpec::ActiveJob::Matchers::GlobalID do
     end
 
     context "hash with extra stuff" do
-      let(:actual) { { '_aj_globalid' => 'gid://my-app/MyModel/ID123', 'other' => 'stuff' } }
+      let(:actual) do
+        { '_aj_globalid' => 'gid://my-app/MyModel/ID123', 'other' => 'stuff' }
+      end
       it { is_expected.to be(false) }
     end
 
@@ -94,4 +99,3 @@ RSpec.describe RSpec::ActiveJob::Matchers::GlobalID do
     specify { expect { matches? }.to raise_error }
   end
 end
-

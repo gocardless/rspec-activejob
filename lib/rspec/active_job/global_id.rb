@@ -5,7 +5,9 @@ module RSpec
     module Matchers
       class GlobalID
         def initialize(expected)
-          raise "expected argument must implement to_global_id" unless valid_expected?(expected)
+          unless valid_expected?(expected)
+            raise "expected argument must implement to_global_id"
+          end
 
           @expected = expected
         end
@@ -29,7 +31,8 @@ module RSpec
         end
 
         def global_id_matches?(other)
-          return false unless parsed = ::GlobalID.parse(other)
+          parsed = ::GlobalID.parse(other)
+          return false unless parsed
           return correct_class?(parsed) if @expected.is_a?(Class)
           other == @expected.to_global_id.to_s
         end
@@ -42,4 +45,3 @@ module RSpec
     end
   end
 end
-
