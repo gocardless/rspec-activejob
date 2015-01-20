@@ -41,7 +41,7 @@ RSpec.describe RSpec::ActiveJob::Matchers::EnqueueA do
 
     context "when it enqueues two jobs" do
       let(:proc) do
-        -> { enqueued_jobs << { job: AJob, args: []} << { job: BJob, args: [] } }
+        -> { enqueued_jobs << { job: AJob, args: [] } << { job: BJob, args: [] } }
       end
 
       it { is_expected.to be(true) }

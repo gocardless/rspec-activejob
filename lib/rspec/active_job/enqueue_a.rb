@@ -27,15 +27,23 @@ module RSpec
           end
 
           unless enqueued_correct_class?
-            return "expected to enqueue a #{job_class}, enqueued a #{enqueued_jobs.last[:job]}"
+            return "expected to enqueue a #{job_class}, " \
+                   "enqueued a #{enqueued_jobs.last[:job]}"
           end
 
-          "expected to enqueue a #{job_class} with #{argument_list_matcher.expected_args}, but enqueued with " \
+          "expected to enqueue a #{job_class} with " \
+          "#{argument_list_matcher.expected_args}, but enqueued with " \
           "#{new_jobs_with_correct_class.first[:args]}"
         end
 
         def supports_block_expectations?
           true
+        end
+
+        def description
+          return "enqueue a job" unless job_class
+          return "enqueue a #{job_class.name}" unless argument_list_matcher
+          "enqueue a #{job_class.name} with #{argument_list_matcher.expected_args}"
         end
 
         private
@@ -65,7 +73,8 @@ module RSpec
         end
 
         def new_jobs_with_correct_class_and_args
-          new_jobs_with_correct_class.select { |job| argument_list_matcher.args_match?(*job[:args]) }
+          new_jobs_with_correct_class.
+            select { |job| argument_list_matcher.args_match?(*job[:args]) }
         end
 
         def enqueued_jobs
