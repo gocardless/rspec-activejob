@@ -5,6 +5,8 @@
 config.active_job.queue_adapter = :test
 
 # spec/spec_helper.rb
+require 'rspec/active_job'
+
 RSpec.configure do |config|
   config.include(RSpec::ActiveJob)
 
