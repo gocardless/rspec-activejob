@@ -9,7 +9,8 @@ Gem::Specification.new do |s|
   s.summary = 'RSpec matchers to test ActiveJob'
   s.description = <<-EOL
     RSpec matchers for ActiveJob:
-    * expect { method }.to enqueue_a(MyJob).with('some', 'arguments')
+    * expect { method }.to enqueue_a(MyJob).with(global_id(some_model),
+                                                 deserialize_as(other_argument))
   EOL
   s.homepage = 'http://github.com/gocardless/rspec-activejob'
   s.license = 'MIT'
@@ -23,4 +24,5 @@ Gem::Specification.new do |s|
 
   s.add_development_dependency('rspec')
   s.add_development_dependency('rspec-its')
+  s.add_development_dependency('activesupport')
 end
