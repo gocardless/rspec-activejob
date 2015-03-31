@@ -29,10 +29,10 @@ end
 
 rspec-activejob expects the current queue adapter to expose an array of `enqueued_jobs`, like the included
 test adapter. The test adapter included in ActiveJob 4.2.0 does not fully serialize its arguments, so you
-will not need to use the GlobalID matcher until ActiveJob 4.2.1. See rails/rails#18266 for the improved
-test adapter.
+will not need to use the GlobalID matcher unless you're using ActiveJob 4.2.1. See rails/rails#18266 for 
+the improved test adapter.
 
-This gem defines two matchers:
+This gem defines three matchers:
 
 * `enqueue_a`: for a block or proc, expects that to enqueue an job to the ActiveJob test adapter. Optionally
   takes the job class as its argument, and can be modified with a `.with(*args)` call to expect specific arguments.
@@ -43,6 +43,8 @@ This gem defines two matchers:
   the serialized version of any instance of that model; if you pass an instance, it will expect the serialized
   version of that specific instance.
 
+* `deserialize_as(hash)`: an argument matcher, matching ActiveJob-serialized versions of hashes (with
+  string/symbol keys, or with indifferent access).
 
 With the `global_id` matcher it's important to note that it's specific to ActiveJob-serialized GlobalIDs.
 ActiveJob serializes them as a hash like `{ '_aj_global_id' => 'gid://my-app/MyModel/ID123' }`, to avoid
