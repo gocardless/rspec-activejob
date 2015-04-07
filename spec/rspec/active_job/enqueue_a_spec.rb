@@ -11,62 +11,119 @@ RSpec.describe RSpec::ActiveJob::Matchers::EnqueueA do
 
   let(:job_class) { nil }
   let(:instance) { described_class.new(job_class) }
-  subject(:matches?) { instance.matches?(proc) }
 
-  context "when nothing gets enqueued" do
-    let(:proc) { -> {} }
-    it { is_expected.to be(false) }
-    specify do
-      matches?
-      expect(instance.failure_message).
-        to eq("expected to enqueue a job, enqueued nothing")
-    end
-  end
+  context "with a block" do
+    subject(:matches?) { instance.matches?(proc) }
 
-  context "when something gets enqueued" do
-    let(:proc) { -> { enqueued_jobs << { job: AJob, args: [] } } }
-
-    it { is_expected.to be(true) }
-
-    context "when it enqueues the wrong job" do
-      let(:job_class) { BJob }
-
+    context "when nothing gets enqueued" do
+      let(:proc) { -> {} }
       it { is_expected.to be(false) }
       specify do
         matches?
         expect(instance.failure_message).
-          to eq("expected to enqueue a BJob, enqueued a AJob")
+          to eq("expected to enqueue a job, enqueued nothing")
       end
     end
 
-    context "when it enqueues two jobs" do
+    context "when something gets enqueued" do
+      let(:proc) { -> { enqueued_jobs << { job: AJob, args: [] } } }
+
+      it { is_expected.to be(true) }
+
+      context "when it enqueues the wrong job" do
+        let(:job_class) { BJob }
+
+        it { is_expected.to be(false) }
+        specify do
+          matches?
+          expect(instance.failure_message).
+            to eq("expected to enqueue a BJob, enqueued a AJob")
+        end
+      end
+
+      context "when it enqueues two jobs" do
+        let(:proc) do
+          -> { enqueued_jobs << { job: AJob, args: [] } << { job: BJob, args: [] } }
+        end
+
+        it { is_expected.to be(true) }
+      end
+    end
+
+    context "with argument expectations" do
+      let(:job_class) { AJob }
+      let(:instance) { described_class.new(job_class).with(*arguments) }
+      let(:arguments) { [instance_of(BJob), hash_including(thing: 1)] }
+
       let(:proc) do
-        -> { enqueued_jobs << { job: AJob, args: [] } << { job: BJob, args: [] } }
+        -> { enqueued_jobs << { job: AJob, args: [BJob.new, { thing: 1, 'thing' => 2 }] } }
       end
 
       it { is_expected.to be(true) }
+
+      context "with mismatching arguments" do
+        let(:proc) { -> { enqueued_jobs << { job: AJob, args: [] } } }
+
+        it { is_expected.to be(false) }
+        specify do
+          matches?
+          expect(instance.failure_message).
+            to eq("expected to enqueue a AJob with #{arguments}, but enqueued with []")
+        end
+      end
     end
   end
 
-  context "with argument expectations" do
-    let(:job_class) { AJob }
-    let(:instance) { described_class.new(job_class).with(*arguments) }
-    let(:arguments) { [instance_of(BJob), hash_including(thing: 1)] }
+  context "with job class" do
+    let(:instance) { described_class.new }
+    subject(:matches?) { instance.matches?(job_class) }
 
-    let(:proc) do
-      -> { enqueued_jobs << { job: AJob, args: [BJob.new, { thing: 1, 'thing' => 2 }] } }
-    end
-
-    it { is_expected.to be(true) }
-
-    context "with mismatching arguments" do
-      let(:proc) { -> { enqueued_jobs << { job: AJob, args: [] } } }
-
+    context "when nothing has been enqueued" do
       it { is_expected.to be(false) }
       specify do
         matches?
         expect(instance.failure_message).
-          to eq("expected to enqueue a AJob with #{arguments}, but enqueued with []")
+          to eq("expected to enqueue a job, enqueued nothing")
+      end
+    end
+
+    context "when something gets enqueued" do
+      let(:enqueued_jobs) { [{ job: AJob, args: [] }] }
+
+      it { is_expected.to be(true) }
+
+      context "when it enqueues the wrong job" do
+        let(:job_class) { BJob }
+
+        it { is_expected.to be(false) }
+        specify do
+          matches?
+          expect(instance.failure_message).
+            to eq("expected to enqueue a BJob, enqueued a AJob")
+        end
+      end
+
+      context "when it enqueues two jobs" do
+        let(:enqueued_jobs) { [{ job: AJob, args: [] }, { job: BJob, args: [] }] }
+        it { is_expected.to be(true) }
+      end
+
+      context "with argument expectations" do
+        let(:job_class) { AJob }
+        let(:instance) { described_class.new.with(*arguments) }
+        let(:arguments) { [instance_of(BJob), hash_including(thing: 1)] }
+        let(:enqueued_jobs) { [{ job: AJob, args: [BJob.new, { thing: 1, 'thing' => 2}] }] }
+        it { is_expected.to be(true) }
+
+        context "with mismatching arguments"do
+          let(:enqueued_jobs) { [{ job: AJob, args: [] }] }
+          it { is_expected.to be(false) }
+          specify do
+            matches?
+            expect(instance.failure_message).
+              to eq("expected to enqueue a AJob with #{arguments}, but enqueued with []")
+          end
+        end
       end
     end
   end
