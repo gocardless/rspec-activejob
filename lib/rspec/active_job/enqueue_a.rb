@@ -8,15 +8,21 @@ module RSpec
           @job_class = job_class
         end
 
-        def matches?(block)
-          @before_jobs = enqueued_jobs.dup
-          block.call
-          enqueued_something? && enqueued_correct_class? && with_correct_args?
+        def matches?(actual)
+          raise "must use a block with enqueue_a" if !actual.is_a?(Proc) && @job_class
+
+          if actual.is_a?(Proc)
+            @before_jobs = enqueued_jobs.dup
+            actual.call
+            enqueued_something? && enqueued_correct_class? && with_correct_args?
+          else
+            @job_class = actual
+            @before_jobs = []
+            enqueued_something? && enqueued_correct_class? && with_correct_args?
+          end
         end
 
         def with(*args)
-          raise "Must specify the job class when specifying arguments" unless job_class
-
           @argument_list_matcher = RSpec::Mocks::ArgumentListMatcher.new(*args)
           self
         end

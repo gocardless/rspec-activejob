@@ -8,6 +8,10 @@ module RSpec
       Matchers::EnqueueA.new(job_class)
     end
 
+    def have_been_enqueued
+      Matchers::EnqueueA.new
+    end
+
     def global_id(expected)
       Matchers::GlobalID.new(expected)
     end
