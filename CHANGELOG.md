@@ -1,4 +1,8 @@
-## 0.3.0 - Unreleased
+## 0.4.0 - April 20, 2015
+
+- Added the `have_been_enqueued` matcher
+
+## 0.3.0 - March 21, 2015
 
 - Added the `deserialize_as` matcher
 
