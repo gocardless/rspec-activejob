@@ -1,3 +1,7 @@
+## 0.4.1 - May 5, 2015
+
+- Added `failure_message_negated` for nice failure messages when a `to_not` fails
+
 ## 0.4.0 - April 20, 2015
 
 - Added the `have_been_enqueued` matcher
