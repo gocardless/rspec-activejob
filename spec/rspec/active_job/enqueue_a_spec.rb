@@ -30,6 +30,12 @@ RSpec.describe RSpec::ActiveJob::Matchers::EnqueueA do
 
       it { is_expected.to be(true) }
 
+      specify do
+        matches?
+        expect(instance.failure_message_negated).
+          to eq("expected to not enqueue a job")
+      end
+
       context "when it enqueues the wrong job" do
         let(:job_class) { BJob }
 
@@ -38,6 +44,17 @@ RSpec.describe RSpec::ActiveJob::Matchers::EnqueueA do
           matches?
           expect(instance.failure_message).
             to eq("expected to enqueue a BJob, enqueued a AJob")
+        end
+      end
+
+      context "when it enqueues the right job" do
+        let(:job_class) { AJob }
+
+        it { is_expected.to be(true) }
+        specify do
+          matches?
+          expect(instance.failure_message_negated).
+            to eq("expected to not enqueue a AJob, but enqueued a AJob with []")
         end
       end
 

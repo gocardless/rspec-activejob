@@ -42,6 +42,21 @@ module RSpec
           "#{new_jobs_with_correct_class.first[:args]}"
         end
 
+        def failure_message_negated
+          return "expected to not enqueue a job" unless job_class
+
+          message = "expected to not enqueue a #{job_class}"
+          if @argument_list_matcher
+            message += " with #{argument_list_matcher.expected_args}"
+          end
+
+          message += ", but enqueued a #{enqueued_jobs.last[:job]}"
+
+          return message unless enqueued_correct_class?
+
+          return message + " with #{new_jobs_with_correct_class.first[:args]}"
+        end
+
         def supports_block_expectations?
           true
         end
