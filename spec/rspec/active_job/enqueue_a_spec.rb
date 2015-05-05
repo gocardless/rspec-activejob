@@ -73,7 +73,9 @@ RSpec.describe RSpec::ActiveJob::Matchers::EnqueueA do
       let(:arguments) { [instance_of(BJob), hash_including(thing: 1)] }
 
       let(:proc) do
-        -> { enqueued_jobs << { job: AJob, args: [BJob.new, { thing: 1, 'thing' => 2 }] } }
+        lambda do
+          enqueued_jobs << { job: AJob, args: [BJob.new, { thing: 1, 'thing' => 2 }] }
+        end
       end
 
       it { is_expected.to be(true) }
@@ -129,7 +131,9 @@ RSpec.describe RSpec::ActiveJob::Matchers::EnqueueA do
         let(:job_class) { AJob }
         let(:instance) { described_class.new.with(*arguments) }
         let(:arguments) { [instance_of(BJob), hash_including(thing: 1)] }
-        let(:enqueued_jobs) { [{ job: AJob, args: [BJob.new, { thing: 1, 'thing' => 2}] }] }
+        let(:enqueued_jobs) do
+          [{ job: AJob, args: [BJob.new, { thing: 1, 'thing' => 2 }] }]
+        end
         it { is_expected.to be(true) }
 
         context "with mismatching arguments"do

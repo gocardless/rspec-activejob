@@ -54,7 +54,7 @@ module RSpec
 
           return message unless enqueued_correct_class?
 
-          return message + " with #{new_jobs_with_correct_class.first[:args]}"
+          message + " with #{new_jobs_with_correct_class.first[:args]}"
         end
 
         def supports_block_expectations?

@@ -1,3 +1,5 @@
+inherit_from: .rubocop_todo.yml
+
 # Limit lines to 90 characters.
 LineLength:
   Max: 90
