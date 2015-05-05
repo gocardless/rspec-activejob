@@ -30,6 +30,12 @@ RSpec.describe RSpec::ActiveJob::Matchers::EnqueueA do
 
       it { is_expected.to be(true) }
 
+      specify do
+        matches?
+        expect(instance.failure_message_negated).
+          to eq("expected to not enqueue a job")
+      end
+
       context "when it enqueues the wrong job" do
         let(:job_class) { BJob }
 
@@ -38,6 +44,17 @@ RSpec.describe RSpec::ActiveJob::Matchers::EnqueueA do
           matches?
           expect(instance.failure_message).
             to eq("expected to enqueue a BJob, enqueued a AJob")
+        end
+      end
+
+      context "when it enqueues the right job" do
+        let(:job_class) { AJob }
+
+        it { is_expected.to be(true) }
+        specify do
+          matches?
+          expect(instance.failure_message_negated).
+            to eq("expected to not enqueue a AJob, but enqueued a AJob with []")
         end
       end
 
@@ -56,7 +73,9 @@ RSpec.describe RSpec::ActiveJob::Matchers::EnqueueA do
       let(:arguments) { [instance_of(BJob), hash_including(thing: 1)] }
 
       let(:proc) do
-        -> { enqueued_jobs << { job: AJob, args: [BJob.new, { thing: 1, 'thing' => 2 }] } }
+        lambda do
+          enqueued_jobs << { job: AJob, args: [BJob.new, { thing: 1, 'thing' => 2 }] }
+        end
       end
 
       it { is_expected.to be(true) }
@@ -112,7 +131,9 @@ RSpec.describe RSpec::ActiveJob::Matchers::EnqueueA do
         let(:job_class) { AJob }
         let(:instance) { described_class.new.with(*arguments) }
         let(:arguments) { [instance_of(BJob), hash_including(thing: 1)] }
-        let(:enqueued_jobs) { [{ job: AJob, args: [BJob.new, { thing: 1, 'thing' => 2}] }] }
+        let(:enqueued_jobs) do
+          [{ job: AJob, args: [BJob.new, { thing: 1, 'thing' => 2 }] }]
+        end
         it { is_expected.to be(true) }
 
         context "with mismatching arguments"do
