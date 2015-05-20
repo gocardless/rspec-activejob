@@ -42,7 +42,7 @@ module RSpec
           "#{new_jobs_with_correct_class.first[:args]}"
         end
 
-        def failure_message_negated
+        def failure_message_when_negated
           return "expected to not enqueue a job" unless job_class
 
           message = "expected to not enqueue a #{job_class}"
