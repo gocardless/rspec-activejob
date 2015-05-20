@@ -32,7 +32,7 @@ RSpec.describe RSpec::ActiveJob::Matchers::EnqueueA do
 
       specify do
         matches?
-        expect(instance.failure_message_negated).
+        expect(instance.failure_message_when_negated).
           to eq("expected to not enqueue a job")
       end
 
@@ -53,7 +53,7 @@ RSpec.describe RSpec::ActiveJob::Matchers::EnqueueA do
         it { is_expected.to be(true) }
         specify do
           matches?
-          expect(instance.failure_message_negated).
+          expect(instance.failure_message_when_negated).
             to eq("expected to not enqueue a AJob, but enqueued a AJob with []")
         end
       end
