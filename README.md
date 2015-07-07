@@ -1,3 +1,18 @@
+# Instalation
+
+```gem install rspec-activejob ```
+
+Or add it to the Gemfile into the :development and :test group
+
+```ruby
+# Gemfile
+group :development, :test do
+  ...
+  gem 'rspec-activejob'
+  ...
+end
+```
+
 # RSpec ActiveJob matchers
 
 ```ruby
