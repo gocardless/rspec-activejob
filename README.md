@@ -39,6 +39,10 @@ RSpec.describe MyController do
   subject(:make_request) { described_class.make_request(params) }
 
   specify { expect { make_request }.to enqueue_a(RequestMaker).with(global_id(user)) }
+  
+  # or
+  make_request
+  expect(RequestMaker).to have_been_enqueued.with(global_id(user))
 end
 ```
 
@@ -47,11 +51,13 @@ test adapter. The test adapter included in ActiveJob 4.2.0 does not fully serial
 will not need to use the GlobalID matcher unless you're using ActiveJob 4.2.1. See rails/rails#18266 for 
 the improved test adapter.
 
-This gem defines three matchers:
+This gem defines four matchers:
 
 * `enqueue_a`: for a block or proc, expects that to enqueue an job to the ActiveJob test adapter. Optionally
   takes the job class as its argument, and can be modified with a `.with(*args)` call to expect specific arguments.
   This will use the same argument list matcher as rspec-mocks' `receive(:message).with(*args)` matcher.
+
+* `have_been_enqueued`: expects to have enqueued an job in the ActiveJob test adapter. Can be modified with a `.with(*args)` call to expect specific arguments. This will use the same argument list matcher as rspec-mocks' `receive(:message).with(*args)` matcher.
 
 * `global_id(model_or_class)`: an argument matcher, matching ActiveJob-serialized versions of model classes or
   specific models (or any other class which implements `to_global_id`). If you pass a model class, it will match
