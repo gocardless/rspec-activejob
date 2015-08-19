@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    rspec-activejob (0.4.1)
+    rspec-activejob (0.4.2)
       activejob (>= 4.2)
       rspec-mocks
 
@@ -59,3 +59,6 @@ DEPENDENCIES
   rspec
   rspec-activejob!
   rspec-its
+
+BUNDLED WITH
+   1.10.6
