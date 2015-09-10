@@ -148,4 +148,31 @@ RSpec.describe RSpec::ActiveJob::Matchers::EnqueueA do
       end
     end
   end
+
+  context "with run time expectations" do
+    let(:instance) { described_class.new }
+    let(:run_time) { Time.parse('2015-09-10 00:00:00 UTC').to_f }
+    subject(:matches?) { instance.to_run_at(run_time).matches?(AJob) }
+
+    let(:enqueued_jobs) do
+      [{ job: AJob, args: [], at: time }]
+    end
+
+    context "correct time" do
+      let(:time) { run_time }
+      it { is_expected.to be(true) }
+    end
+
+    context "wrong time" do
+      let(:time) { run_time + 1 }
+      it { is_expected.to be(false) }
+
+      specify do
+        matches?
+        expect(instance.failure_message).
+          to eq("expected to run job at 2015-09-10 00:00:00 UTC, " \
+            "but enqueued to run at 2015-09-10 00:00:01 UTC")
+      end
+    end
+  end
 end
