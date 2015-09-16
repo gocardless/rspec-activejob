@@ -1,3 +1,7 @@
+## 0.5.0 - September 16, 2015
+
+- Add `to_run_at` modifier - patch by [@vidmantas](https://github.com/vidmantas)
+
 ## 0.4.2 - August 19, 2015
 
 - Improve `failure_message_negated` - patch by [@swastik](https://github.com/swastik)
