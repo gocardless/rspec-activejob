@@ -1,4 +1,5 @@
-# Instalation
+![TravisCI status](https://travis-ci.org/gocardless/rspec-activejob.svg?branch=master)
+# Installation
 
 ```gem install rspec-activejob ```
 
