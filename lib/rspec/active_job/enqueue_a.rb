@@ -14,16 +14,21 @@ module RSpec
           if actual.is_a?(Proc)
             @before_jobs = enqueued_jobs.dup
             actual.call
-            enqueued_something? && enqueued_correct_class? && with_correct_args?
+            all_checks_pass?
           else
             @job_class = actual
             @before_jobs = []
-            enqueued_something? && enqueued_correct_class? && with_correct_args?
+            all_checks_pass?
           end
         end
 
         def with(*args)
           @argument_list_matcher = RSpec::Mocks::ArgumentListMatcher.new(*args)
+          self
+        end
+
+        def to_run_at(time)
+          @run_time = time.to_f
           self
         end
 
@@ -35,6 +40,11 @@ module RSpec
           unless enqueued_correct_class?
             return "expected to enqueue a #{job_class}, " \
                    "enqueued a #{enqueued_jobs.last[:job]}"
+          end
+
+          unless at_correct_time?
+            return "expected to run job at #{Time.at(run_time).utc}, " \
+                   "but enqueued to run at #{format_enqueued_times}"
           end
 
           "expected to enqueue a #{job_class} with " \
@@ -69,7 +79,15 @@ module RSpec
 
         private
 
-        attr_reader :before_count, :after_count, :job_class, :argument_list_matcher
+        attr_reader :before_count, :after_count, :job_class, :argument_list_matcher,
+                    :run_time
+
+        def all_checks_pass?
+          enqueued_something? &&
+            enqueued_correct_class? &&
+            with_correct_args? &&
+            at_correct_time?
+        end
 
         def enqueued_something?
           new_jobs.any?
@@ -100,6 +118,16 @@ module RSpec
 
         def enqueued_jobs
           ::ActiveJob::Base.queue_adapter.enqueued_jobs
+        end
+
+        def at_correct_time?
+          return true unless run_time
+
+          !new_jobs_with_correct_class.find { |job| job[:at] == run_time }.nil?
+        end
+
+        def format_enqueued_times
+          new_jobs_with_correct_class.map { |job| Time.at(job[:at]).utc.to_s }.join(', ')
         end
       end
     end
