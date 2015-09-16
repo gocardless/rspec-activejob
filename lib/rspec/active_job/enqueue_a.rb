@@ -33,23 +33,10 @@ module RSpec
         end
 
         def failure_message
-          unless enqueued_something?
-            return "expected to enqueue a #{job_class || 'job'}, enqueued nothing"
-          end
-
-          unless enqueued_correct_class?
-            return "expected to enqueue a #{job_class}, " \
-                   "enqueued a #{enqueued_jobs.last[:job]}"
-          end
-
-          unless at_correct_time?
-            return "expected to run job at #{Time.at(run_time).utc}, " \
-                   "but enqueued to run at #{format_enqueued_times}"
-          end
-
-          "expected to enqueue a #{job_class} with " \
-          "#{argument_list_matcher.expected_args}, but enqueued with " \
-          "#{new_jobs_with_correct_class.first[:args]}"
+          enqueued_nothing_message ||
+            enqueued_wrong_class_message ||
+            enqueued_at_wrong_time_message ||
+            wrong_arguments_message
         end
 
         def failure_message_when_negated
@@ -101,6 +88,29 @@ module RSpec
         def with_correct_args?
           return true unless argument_list_matcher
           new_jobs_with_correct_class_and_args.any?
+        end
+
+        def enqueued_nothing_message
+          return if enqueued_something?
+          "expected to enqueue a #{job_class || 'job'}, enqueued nothing"
+        end
+
+        def enqueued_wrong_class_message
+          return if enqueued_correct_class?
+          "expected to enqueue a #{job_class}, enqueued a " \
+            "#{enqueued_jobs.last[:job]}"
+        end
+
+        def enqueued_at_wrong_time_message
+          return if at_correct_time?
+          "expected to run job at #{Time.at(run_time).utc}, but enqueued to " \
+            "run at #{format_enqueued_times}"
+        end
+
+        def wrong_arguments_message
+          "expected to enqueue a #{job_class} with " \
+          "#{argument_list_matcher.expected_args}, but enqueued with " \
+          "#{new_jobs_with_correct_class.first[:args]}"
         end
 
         def new_jobs

@@ -8,9 +8,11 @@ module RSpec
       Matchers::EnqueueA.new(job_class)
     end
 
+    # rubocop:disable Style/PredicateName
     def have_been_enqueued
       Matchers::EnqueueA.new
     end
+    # rubocop:enable Style/PredicateName
 
     def global_id(expected)
       Matchers::GlobalID.new(expected)
