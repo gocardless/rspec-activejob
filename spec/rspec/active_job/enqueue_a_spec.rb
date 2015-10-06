@@ -124,7 +124,16 @@ RSpec.describe RSpec::ActiveJob::Matchers::EnqueueA do
 
       context "when it enqueues two jobs" do
         let(:enqueued_jobs) { [{ job: AJob, args: [] }, { job: BJob, args: [] }] }
-        it { is_expected.to be(true) }
+
+        context "matches first job" do
+          let(:job_class) { AJob }
+          it { is_expected.to be(true) }
+        end
+
+        context "matches second job" do
+          let(:job_class) { BJob }
+          it { is_expected.to be(true) }
+        end
       end
 
       context "with argument expectations" do
