@@ -1,3 +1,7 @@
+## 0.6.0 - October 15, 2015
+
+- Add `once` and `times(n)` modifiers - patch by [@antstorm](https://github.com/antstorm)
+
 ## 0.5.0 - September 16, 2015
 
 - Add `to_run_at` modifier - patch by [@vidmantas](https://github.com/vidmantas)
