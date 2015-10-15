@@ -184,4 +184,58 @@ RSpec.describe RSpec::ActiveJob::Matchers::EnqueueA do
       end
     end
   end
+
+  context "with number of times expectations" do
+    let(:instance) { described_class.new }
+
+    context "once" do
+      subject(:matches?) { instance.once.matches?(AJob) }
+
+      context "correct number of times" do
+        let(:enqueued_jobs) { [{ job: AJob, args: [] }] }
+
+        it { is_expected.to be(true) }
+      end
+
+      context "wrong number of times" do
+        let(:enqueued_jobs) do
+          [{ job: AJob, args: [] }, { job: AJob, args: [] }]
+        end
+
+        it { is_expected.to be(false) }
+
+        specify do
+          matches?
+          expect(instance.failure_message).
+            to eq("expected to enqueue a AJob once, but enqueued 2 times")
+        end
+      end
+    end
+
+    context "mutiple times" do
+      subject(:matches?) { instance.times(2).matches?(AJob) }
+
+      context "correct number of times" do
+        let(:enqueued_jobs) do
+          [{ job: AJob, args: [] }, { job: AJob, args: [] }]
+        end
+
+        it { is_expected.to be(true) }
+      end
+
+      context "wrong number of times" do
+        let(:enqueued_jobs) do
+          [{ job: AJob, args: [] }]
+        end
+
+        it { is_expected.to be(false) }
+
+        specify do
+          matches?
+          expect(instance.failure_message).
+            to eq("expected to enqueue a AJob 2 times, but enqueued once")
+        end
+      end
+    end
+  end
 end

@@ -32,10 +32,21 @@ module RSpec
           self
         end
 
+        def once
+          @number_of_times = 1
+          self
+        end
+
+        def times(n)
+          @number_of_times = n
+          self
+        end
+
         def failure_message
           enqueued_nothing_message ||
             enqueued_wrong_class_message ||
             enqueued_at_wrong_time_message ||
+            enqueued_wrong_number_of_times_message ||
             wrong_arguments_message
         end
 
@@ -67,13 +78,14 @@ module RSpec
         private
 
         attr_reader :before_count, :after_count, :job_class, :argument_list_matcher,
-                    :run_time
+                    :run_time, :number_of_times
 
         def all_checks_pass?
           enqueued_something? &&
             enqueued_correct_class? &&
             with_correct_args? &&
-            at_correct_time?
+            at_correct_time? &&
+            enqueued_correct_number_of_times?
         end
 
         def enqueued_something?
@@ -113,6 +125,17 @@ module RSpec
           "#{new_jobs_with_correct_class.first[:args]}"
         end
 
+        def enqueued_wrong_number_of_times_message
+          return if enqueued_correct_number_of_times?
+          "expected to enqueue a #{job_class} " \
+          "#{times_count(number_of_times)}, but enqueued " \
+          "#{times_count(new_jobs.count)}"
+        end
+
+        def times_count(n)
+          n == 1 ? 'once' : "#{n} times"
+        end
+
         def new_jobs
           enqueued_jobs - @before_jobs
         end
@@ -138,6 +161,12 @@ module RSpec
 
         def format_enqueued_times
           new_jobs_with_correct_class.map { |job| Time.at(job[:at]).utc.to_s }.join(', ')
+        end
+
+        def enqueued_correct_number_of_times?
+          return true unless number_of_times
+
+          new_jobs.count == number_of_times
         end
       end
     end
