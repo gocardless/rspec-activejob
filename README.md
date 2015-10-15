@@ -58,8 +58,10 @@ This gem defines four matchers:
   takes the job class as its argument, and can be modified with a `.with(*args)` call to expect specific arguments.
   This will use the same argument list matcher as rspec-mocks' `receive(:message).with(*args)` matcher.
   If your job uses `set(wait_until: time)`, you can use `.to_run_at(time)` chain after `enqueue_a` call as well.
+  In order to check for the right number of enqueued jobs use a `.once` or `.times(n)` modifiers.
 
-* `have_been_enqueued`: expects to have enqueued an job in the ActiveJob test adapter. Can be modified with a `.with(*args)` call to expect specific arguments. This will use the same argument list matcher as rspec-mocks' `receive(:message).with(*args)` matcher.
+* `have_been_enqueued`: expects to have enqueued an job in the ActiveJob test adapter. Optionally accepts all the
+  same modifiers as `enqueue_a`.
 
 * `global_id(model_or_class)`: an argument matcher, matching ActiveJob-serialized versions of model classes or
   specific models (or any other class which implements `to_global_id`). If you pass a model class, it will match
