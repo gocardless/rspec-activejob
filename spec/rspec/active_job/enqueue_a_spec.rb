@@ -192,9 +192,17 @@ RSpec.describe RSpec::ActiveJob::Matchers::EnqueueA do
       subject(:matches?) { instance.once.matches?(AJob) }
 
       context "correct number of times" do
-        let(:enqueued_jobs) { [{ job: AJob, args: [] }] }
+        context "as the only job" do
+          let(:enqueued_jobs) { [{ job: AJob, args: [] }] }
 
-        it { is_expected.to be(true) }
+          it { is_expected.to be(true) }
+        end
+
+        context "with other jobs" do
+          let(:enqueued_jobs) { [{ job: AJob, args: [] }, { job: BJob, args: [] }] }
+
+          it { is_expected.to be(true) }
+        end
       end
 
       context "wrong number of times" do
@@ -216,11 +224,19 @@ RSpec.describe RSpec::ActiveJob::Matchers::EnqueueA do
       subject(:matches?) { instance.times(2).matches?(AJob) }
 
       context "correct number of times" do
-        let(:enqueued_jobs) do
-          [{ job: AJob, args: [] }, { job: AJob, args: [] }]
+        context "as the only job" do
+          let(:enqueued_jobs) { [{ job: AJob, args: [] }, { job: AJob, args: [] }] }
+
+          it { is_expected.to be(true) }
         end
 
-        it { is_expected.to be(true) }
+        context "with other jobs" do
+          let(:enqueued_jobs) do
+            [{ job: AJob, args: [] }, { job: AJob, args: [] }, { job: BJob, args: [] }]
+          end
+
+          it { is_expected.to be(true) }
+        end
       end
 
       context "wrong number of times" do

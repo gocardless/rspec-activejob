@@ -166,7 +166,7 @@ module RSpec
         def enqueued_correct_number_of_times?
           return true unless number_of_times
 
-          new_jobs.count == number_of_times
+          new_jobs_with_correct_class.count == number_of_times
         end
       end
     end
