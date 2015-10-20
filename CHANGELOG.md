@@ -1,3 +1,8 @@
+## 0.6.1 - October 20, 2015
+
+- Make `once` and `times(n)` modifiers play nicely with other jobs being enqueued - patch
+  by [@basawyer](https://github.com/basawyer)
+
 ## 0.6.0 - October 15, 2015
 
 - Add `once` and `times(n)` modifiers - patch by [@antstorm](https://github.com/antstorm)
