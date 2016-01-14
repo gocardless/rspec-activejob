@@ -36,14 +36,14 @@ end
 # spec/controllers/my_controller_spec.rb
 RSpec.describe MyController do
   let(:user) { create(:user) }
-  let(:params) { { user_id: user.id } }
+  let(:params) { { user_id: user.id }.with_indifferent_access }
   subject(:make_request) { described_class.make_request(params) }
 
-  specify { expect { make_request }.to enqueue_a(RequestMaker).with(global_id(user)) }
+  specify { expect { make_request }.to enqueue_a(RequestMaker).with(global_id(user), deserialize_as(params)) }
 
   # or
   make_request
-  expect(RequestMaker).to have_been_enqueued.with(global_id(user))
+  expect(RequestMaker).to have_been_enqueued.with(global_id(user), deserialize_as(params))
 end
 ```
 
@@ -69,7 +69,7 @@ This gem defines four matchers:
   version of that specific instance.
 
 * `deserialize_as(hash)`: an argument matcher, matching ActiveJob-serialized versions of hashes (with
-  string/symbol keys, or with indifferent access).
+  string/symbol keys, or with indifferent access).  This is required to properly match an instance of `ActionController::Parameters` in a controller spec for instance.
 
 With the `global_id` matcher it's important to note that it's specific to ActiveJob-serialized GlobalIDs.
 ActiveJob serializes them as a hash like `{ '_aj_global_id' => 'gid://my-app/MyModel/ID123' }`, to avoid
