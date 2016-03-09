@@ -65,6 +65,15 @@ RSpec.describe RSpec::ActiveJob::Matchers::EnqueueA do
 
         it { is_expected.to be(true) }
       end
+
+      context "when it enqueues a job with the same arguments as an existing job" do
+        before { enqueued_jobs << { job: AJob, args: [] } }
+        let(:proc) do
+          -> { enqueued_jobs << { job: AJob, args: [] } }
+        end
+
+        it { is_expected.to be(true) }
+      end
     end
 
     context "with argument expectations" do
