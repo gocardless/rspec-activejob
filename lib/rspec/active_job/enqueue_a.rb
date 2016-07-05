@@ -14,12 +14,11 @@ module RSpec
           if actual.is_a?(Proc)
             @before_jobs = enqueued_jobs.dup
             actual.call
-            all_checks_pass?
           else
             @job_class = actual
             @before_jobs = []
-            all_checks_pass?
           end
+          all_checks_pass?
         end
 
         def with(*args)
