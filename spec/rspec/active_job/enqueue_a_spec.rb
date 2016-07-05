@@ -145,7 +145,7 @@ RSpec.describe RSpec::ActiveJob::Matchers::EnqueueA do
         end
         it { is_expected.to be(true) }
 
-        context "with mismatching arguments"do
+        context "with mismatching arguments" do
           let(:enqueued_jobs) { [{ job: AJob, args: [] }] }
           it { is_expected.to be(false) }
           specify do
