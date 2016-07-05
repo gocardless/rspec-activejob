@@ -2,3 +2,7 @@ source "https://rubygems.org"
 gemspec
 
 gem 'activejob', '~> 4.2.0'
+
+group :test do
+  gem 'pry'
+end
