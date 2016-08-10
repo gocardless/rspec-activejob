@@ -19,11 +19,11 @@ Gem::Specification.new do |s|
   s.files = `git ls-files`.split($INPUT_RECORD_SEPARATOR)
   s.require_paths = %w(lib)
 
-  s.add_runtime_dependency('activejob', '>= 4.2')
+  s.add_runtime_dependency('activejob', '>= 4.2', '< 5.1.0')
   s.add_runtime_dependency('rspec-mocks')
 
   s.add_development_dependency('rspec')
   s.add_development_dependency('rspec-its')
   s.add_development_dependency('activesupport')
-  s.add_development_dependency('rubocop')
+  s.add_development_dependency('rubocop', '~> 0.41')
 end

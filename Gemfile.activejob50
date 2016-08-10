@@ -1,0 +1,8 @@
+source "https://rubygems.org"
+gemspec
+
+gem 'activejob', '~> 5.0.0'
+
+group :test do
+  gem 'pry'
+end

@@ -1,10 +1,24 @@
 language: ruby
 rvm:
-  - 2.2
-  - 2.1
-  - 2.0
-  - 1.9
-  - jruby-19mode
+  - "2.3.1"
+  - "2.2.2"
+  - "2.1"
+  - "2.0"
+  - "1.9"
+  - "jruby-19mode"
+gemfile:
+  - Gemfile.activejob42
+  - Gemfile.activejob50
+matrix:
+  exclude:
+    - rvm: "jruby-19mode"
+      gemfile: Gemfile.activejob50
+    - rvm: "1.9"
+      gemfile: Gemfile.activejob50
+    - rvm: "2.0"
+      gemfile: Gemfile.activejob50
+    - rvm: "2.1"
+      gemfile: Gemfile.activejob50
 script:
   - bundle exec rspec
   - bundle exec rubocop
