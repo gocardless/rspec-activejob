@@ -1,4 +1,12 @@
 ![TravisCI status](https://travis-ci.org/gocardless/rspec-activejob.svg?branch=master)
+
+# Deprecated
+
+Since v3.5, `rspec-rails` defines matchers that provide the same functionality
+as those in `rspec-activejob`.  See
+[rspec-rails docs](https://relishapp.com/rspec/rspec-rails/v/3-5/docs/matchers/have-been-enqueued-matcher)
+for more detail.
+
 # Installation
 
 ```gem install rspec-activejob ```
