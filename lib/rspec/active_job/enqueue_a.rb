@@ -137,7 +137,9 @@ module RSpec
         end
 
         def new_jobs
-          enqueued_jobs - @before_jobs
+          result = enqueued_jobs.dup
+          @before_jobs.each { |job| result.delete_at(result.index(job)) }
+          result
         end
 
         def new_jobs_with_correct_class
