@@ -65,6 +65,7 @@ This gem defines four matchers:
 * `enqueue_a`: for a block or proc, expects that to enqueue an job to the ActiveJob test adapter. Optionally
   takes the job class as its argument, and can be modified with a `.with(*args)` call to expect specific arguments.
   This will use the same argument list matcher as rspec-mocks' `receive(:message).with(*args)` matcher.
+  To verify the queue name (useful when `queue_as` was passed a block) use `.as(queue_name)` modifier.
   If your job uses `set(wait_until: time)`, you can use `.to_run_at(time)` chain after `enqueue_a` call as well.
   In order to check for the right number of enqueued jobs use a `.once` or `.times(n)` modifiers.
 
