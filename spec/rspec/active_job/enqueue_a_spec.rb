@@ -167,6 +167,32 @@ RSpec.describe RSpec::ActiveJob::Matchers::EnqueueA do
     end
   end
 
+  context "with queue name" do
+    let(:instance) { described_class.new }
+    let(:queue_name) { 'example_queue' }
+    subject(:matches?) { instance.as(queue_name).matches?(AJob) }
+
+    let(:enqueued_jobs) do
+      [{ job: AJob, args: [], queue: name }]
+    end
+
+    context "correct queue name" do
+      let(:name) { queue_name }
+      it { is_expected.to be(true) }
+    end
+
+    context "wrong queue name" do
+      let(:name) { 'wrong_queue' }
+      it { is_expected.to be(false) }
+
+      specify do
+        matches?
+        expect(instance.failure_message).
+          to eq("expected to enqueue as 'example_queue', enqueued as 'wrong_queue'")
+      end
+    end
+  end
+
   context "with run time expectations" do
     let(:instance) { described_class.new }
     let(:run_time) { Time.parse('2015-09-10 00:00:00 UTC').to_f }

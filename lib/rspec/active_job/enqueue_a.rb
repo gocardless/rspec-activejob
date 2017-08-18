@@ -22,6 +22,11 @@ module RSpec
           end
         end
 
+        def as(queue_name)
+          @queue_name = queue_name.to_s
+          self
+        end
+
         def with(*args)
           @argument_list_matcher = RSpec::Mocks::ArgumentListMatcher.new(*args)
           self
@@ -45,6 +50,7 @@ module RSpec
         def failure_message
           enqueued_nothing_message ||
             enqueued_wrong_class_message ||
+            enqueued_as_wrong_queue_message ||
             enqueued_at_wrong_time_message ||
             enqueued_wrong_number_of_times_message ||
             wrong_arguments_message
@@ -77,12 +83,13 @@ module RSpec
 
         private
 
-        attr_reader :before_count, :after_count, :job_class, :argument_list_matcher,
-                    :run_time, :number_of_times
+        attr_reader :before_count, :after_count, :job_class, :queue_name,
+                    :argument_list_matcher, :run_time, :number_of_times
 
         def all_checks_pass?
           enqueued_something? &&
             enqueued_correct_class? &&
+            enqueued_as_correct_queue? &&
             with_correct_args? &&
             at_correct_time? &&
             enqueued_correct_number_of_times?
@@ -95,6 +102,11 @@ module RSpec
         def enqueued_correct_class?
           return true unless job_class
           new_jobs_with_correct_class.any?
+        end
+
+        def enqueued_as_correct_queue?
+          return true unless queue_name
+          new_jobs_with_correct_class.any? { |job| job[:queue] == queue_name }
         end
 
         def with_correct_args?
@@ -111,6 +123,12 @@ module RSpec
           return if enqueued_correct_class?
           "expected to enqueue a #{job_class}, enqueued a " \
             "#{enqueued_jobs.last[:job]}"
+        end
+
+        def enqueued_as_wrong_queue_message
+          return if enqueued_as_correct_queue?
+          "expected to enqueue as '#{queue_name}', enqueued as " \
+            "'#{enqueued_jobs.last[:queue]}'"
         end
 
         def enqueued_at_wrong_time_message
